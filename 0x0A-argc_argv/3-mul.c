@@ -6,22 +6,26 @@
 * @s: string to be converted		
 * Return: the int converted from the string		
 */
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Error: Invalid number of arguments\n");
-        return 1;
-    }
+#include <stdio.h>
+#include <stdlib.h>
 
-    int num1 = atoi(argv[1]);
-    int num2 = atoi(argv[2]);
-
-    if (num1 == 0 || num2 == 0) {
-        printf("Error: Invalid input\n");
-        return 1;
-    }
-
-    int result = num1 * num2;
-    printf("Result: %d\n", result);
-
-    return 0;
+int multiply_numbers(int a, int b) 
+{
+return a * b;
 }
+int main(int argc, char *argv[]) 
+{
+if (argc != 3) 
+{
+printf("Error\n");
+return 1;
+}
+int num1, num2;
+// Convert command-line arguments to integers
+num1 = atoi(argv[1]);
+num2 = atoi(argv[2]);
+int result = multiply_numbers(num1, num2);
+printf("%d\n", result);
+return 0;
+}
+

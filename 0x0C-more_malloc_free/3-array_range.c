@@ -7,9 +7,6 @@
  * @max: max int
  * Return: pointer to the new array
  */
-#include <stdlib.h>
-#include "main.h"
-
 int *array_range(int min, int max)
 {
 if (min > max)
@@ -26,4 +23,6 @@ for (int i = 0; i < size; i++)
 
 return (ptr);
 }
+
+
 

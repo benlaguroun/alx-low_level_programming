@@ -8,14 +8,13 @@
  */
 size_t list_len(const list_t *h)
 {
-if (h == NULL)
-return (0);
-size_t count = 0;
-const list_t *current = h;
-while (current != NULL)
-{
-count++;
-current = current->next;
+	size_t n = 0;
+
+	while (h)
+	{
+		n++;
+		h = h->next;
+	}
+	return (n);
 }
-return (count);
-}
+

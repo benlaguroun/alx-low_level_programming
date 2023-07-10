@@ -1,17 +1,20 @@
 #include "main.h"
 
 /**
- * get_length - Calculates the length of a string.
- * @str: A pointer to the string.
+ * get_text_length - Calculates the length of a string.
+ * @str: The input string.
  *
  * Return: The length of the string.
  */
-size_t get_length(const char *str)
+size_t get_text_length(const char *str)
 {
 	size_t length = 0;
 
-	while (str[length])
-		length++;
+	if (str != NULL)
+	{
+		while (str[length])
+			length++;
+	}
 
 	return (length);
 }
@@ -27,13 +30,10 @@ size_t get_length(const char *str)
 int create_file(const char *filename, const char *text_content)
 {
 	int fd, w;
-	size_t len = 0;
+	size_t len = get_text_length(text_content);
 
 	if (filename == NULL)
 		return (-1);
-
-	if (text_content != NULL)
-		len = get_length(text_content);
 
 	fd = open(filename, O_CREAT | O_RDWR | O_TRUNC, 0600);
 	if (fd == -1)

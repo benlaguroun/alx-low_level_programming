@@ -3,62 +3,83 @@
 #include <stdlib.h>
 
 /**
- * create_buffer - Allocates 1024 bytes for a buffer.
- * @file: The name of the file buffer is storing chars for.
- *
- * Return: A pointer to the newly-allocated buffer.
+ * exit_error - writes an error msg
+ * @argv: array arguments
+ * @n: number of arguments 
  */
+void exit_error(char **argv, int n)
+{
+	if (n == 0)
+	{
+		dprintf(2, "Usage: cp file_from file_to\n");
+		exit(97);
+	}
+	else if (n == 1)
+	{
+		dprintf(2, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
+	}
+	else if (n == 2)
+	{
+		dprintf(2, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
+	}
+}
+/**
+ * close_file - closes file descriptors
+ * @fd: the file descriptor to be closed
+ * Return: 100 if error, 0 if success
+ */
+int close_file(int fd)
+{
+	if (close(fd) == -1)
+	{
+		dprintf(2, "Error: Can't close fd %d\n", fd);
+		exit(100);
+	}
+	return (0);
+}
+/**
+ * main - copies the contents of a file to another file
+ * @argc: the number of arguments supplied to the program.
+ * @argv: an array of pointers to the arguments
+ * Return: 0 on success
+ */
+int main(int argc, char **argv)
+{
+	int fd_r, fd_w, num_r, num_w;
+	char *buffer[1024];
 
-char *create_buffer(char *file);
-void close_file(int fd);
-
-char *create_buffer(char *file)
-{
-char *buffer = malloc(1024);
-if (buffer == NULL)
-{
-dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file);
-exit(99);
-}
-return (buffer);
-}
-void close_file(int fd)
-{
-if (close(fd) == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
-exit(100);
-}
-}
-int main(int argc, char *argv[])
-{
-if (argc != 3)
-{
-dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-exit(97);
-}
-char *buffer = create_buffer(argv[2]);
-int from = open(argv[1], O_RDONLY);
-int to = open(argv[2], O_CREAT | O_WRONLY | O_TRUNC, 0664);
-int r, w;
-while ((r = read(from, buffer, 1024)) > 0)
-{
-if (from == -1 || r == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
-free(buffer);
-exit(98);
-}
-w = write(to, buffer, r);
-if (to == -1 || w == -1)
-{
-dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
-free(buffer);
-exit(99);
-}
-}
-free(buffer);
-close_file(from);
-close_file(to);
-return (0);
+	if (argc != 3)
+		exit_error(argv, 0);
+	fd_r = open(argv[1], O_RDONLY);
+	if (fd_r == -1)
+		exit_error(argv, 1);
+	fd_w = open(argv[2], O_WRONLY | O_CREAT | O_EXCL, 0664);
+	if (fd_w == -1)
+	{
+		if (errno == EEXIST)
+			fd_w = open(argv[2], O_WRONLY | O_TRUNC);
+		else
+		{
+			close_file(fd_r);
+			exit_error(argv, 2);
+		}
+	}
+	while ((num_r = read(fd_r, buffer, 1024)) > 0)
+	{
+		if (num_r == -1)
+		{
+			dprintf(2, "Error: Can't read from file %s\n", argv[1]);
+			close_file(fd_r);
+			close_file(fd_w);
+			exit(98);
+		}
+		num_w = write(fd_w, buffer, num_r);
+		if (num_w == -1)
+			exit_error(argv, 2);
+	}
+	close_file(fd_r);
+	close_file(fd_w);
+	return (0);
 }

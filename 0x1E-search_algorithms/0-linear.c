@@ -1,4 +1,7 @@
 #include "search_algos.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
  * Perform linear search to find the index of a value in an array.
@@ -8,18 +11,20 @@
  * return The index of the value if found, otherwise -1.
  */
 
-int linear_search(int *array, size_t size, int value);
+int linear_search(int *array, size_t size, int value)
 {
-	int i;
+	size_t i = 0;
 
-	if (array == NULL)
+	if (!array || size == 0)
 		return (-1);
 
-	for (i = 0; i < (int)size; i++)
+	while (i < size)
 	{
-		printf("Value checked array[%u] = [%d]\n", i, array[i]);
-		if (value == array[i])
+		printf("Value checked array[%lu] = [%d]\n", i, array[i]);
+		if (array[i] == value)
 			return (i);
+		i++;
 	}
+
 	return (-1);
 }
